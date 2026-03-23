@@ -65,7 +65,7 @@ elif st.session_state.step == 2:
             scelta = st.selectbox(
                 "Scegli Giocatore",
                 player_list,
-                format_func=lambda x: x["name"]
+                format_func=lambda x: x["nickname"]
             )
         with col2:
             posizione = st.number_input("Posizione finale", min_value=1, step=1)
