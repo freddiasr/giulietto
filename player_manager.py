@@ -36,3 +36,8 @@ class PlayerManager:
         response = self.supabase.table("players").select("*").eq("id", id_db).execute()
         player_nickname = response.data[0]["nickname"]
         return player_nickname
+
+    def get_player_emoji(self, id_db):
+        response = self.supabase.table("players").select("*").eq("id", id_db).execute()
+        player_emoji = response.data[0]["emoji"]
+        return player_emoji
