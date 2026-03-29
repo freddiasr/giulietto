@@ -30,9 +30,9 @@ st.markdown("""
 }
 
 .player-name {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 600;
-    color: #1b5e20;
+    color: #ffffff;
     margin-bottom: 6px;
 }
 </style>
@@ -77,8 +77,8 @@ for game in game_manager.games_played():
 
         # 📊 Stat compatte
         c1, c2 = st.columns(2)
-        c1.metric("Donate", player["lives_donated_total"])
-        c2.metric("Ricevute", player["lives_received_total"])
+        c1.metric("Vite donate", player["lives_donated_total"])
+        c2.metric("Vite ricevute", player["lives_received_total"])
 
         st.markdown('</div>', unsafe_allow_html=True)
 
