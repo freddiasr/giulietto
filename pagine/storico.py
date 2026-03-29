@@ -9,7 +9,7 @@ st.title("Storico Partite")
 game_manager = GameManager(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
 player_manager = PlayerManager(st.secrets["SUPABASE_URL"], st.secrets["SUPABASE_KEY"])
 
-# CSS più compatto + testo ridotto
+# 🎨 Stile compatto verde
 st.markdown("""
 <style>
 .game-wrapper {
@@ -17,8 +17,8 @@ st.markdown("""
     border: 1px solid #81c784;
     border-left: 6px solid #2e7d32;
     border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
+    padding: 14px;
+    margin-bottom: 18px;
 }
 
 .player-wrapper {
@@ -26,53 +26,60 @@ st.markdown("""
     border: 1px solid #c8e6c9;
     border-radius: 10px;
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .player-name {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
-    color: #ffffff;
+    color: #1b5e20;
     margin-bottom: 6px;
-}
-
-.small-text {
-    font-size: 13px;
 }
 </style>
 """, unsafe_allow_html=True)
+
+
+# 🥇 Funzione per medaglie
+def get_medal(rank):
+    if rank == 1:
+        return "🥇"
+    elif rank == 2:
+        return "🥈"
+    elif rank == 3:
+        return "🥉"
+    return ""
+
 
 for game in game_manager.games_played():
     game_nr = game["game_nr"]
     game_data = game_manager.get_game_data(game_nr)
 
-    # 🔥 ORDINA PER POSIZIONE
+    # 🔥 Ordina classifica
     game_data = sorted(game_data, key=lambda x: x["final_rank"])
 
     st.markdown('<div class="game-wrapper">', unsafe_allow_html=True)
     st.markdown(f"### Partita Numero {game_nr}")
 
-    cols = st.columns(2)
+    for player in game_data:
+        rank = player["final_rank"]
+        medal = get_medal(rank)
 
-    for i, player in enumerate(game_data):
         player_nickname = player_manager.get_player_nickname(player["player_id"])
-        player_emoji = player_manager.get_player_emoji(player["player_id"])
+        player_emoji = player_manager.get_player_emoji(player["player_id"]) if hasattr(player_manager, "get_player_emoji") else ""
 
-        with cols[i % 2]:
-            st.markdown('<div class="player-wrapper">', unsafe_allow_html=True)
+        st.markdown('<div class="player-wrapper">', unsafe_allow_html=True)
 
-            # Nome più compatto
-            st.markdown(
-                f'<div class="player-name">{player_nickname} {player_emoji}</div>',
-                unsafe_allow_html=True
-            )
+        # 🏆 Nome con posizione + medaglia
+        st.markdown(
+            f'<div class="player-name">{medal} {rank}° - {player_nickname} {player_emoji}</div>',
+            unsafe_allow_html=True
+        )
 
-            # Metriche più piccole (usiamo colonne strette)
-            c1, c2, c3 = st.columns(3)
-            c1.metric("Pos", player["final_rank"])
-            c2.metric("Donate", player["lives_donated_total"])
-            c3.metric("Ricevute", player["lives_received_total"])
+        # 📊 Stat compatte
+        c1, c2 = st.columns(2)
+        c1.metric("Donate", player["lives_donated_total"])
+        c2.metric("Ricevute", player["lives_received_total"])
 
-            st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
